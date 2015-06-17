@@ -1,0 +1,7 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1347\cocoasubrtf570
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww25400\viewh13420\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural
+
+\f0\fs24 \cf0 Now, as mentioned, the essence of this log shipper is to monitor an input file or a network port or even something you want to monitor for which you could easily write a plugin. This input is monitored and can optionally be converted to a format of your choice, say XML, JSON and so on. This is then passed to the output specified (one or more), and can again be a file or a network port or something for which you can write a plugin yourself. In the config file named config.json, you can specify numerous input, conversion and output combinations in JSON format. Each combination is treated separately, and internally, the code forks for each combination. Along with the input, you must specify the type of the input, and parameters, like the name of the file to be monitored or the network port to be scanned. The same goes for conversion and outputs. You can take a look at the config file already in the repo as a starting point.}
