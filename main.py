@@ -27,13 +27,29 @@ def call_plugin(typ, category, *args, **kwargs):
     get_plugin(typ, category)
     plugin_main(*args, **kwargs)
 
-def main_child(process_queue, process_lock):
-    process_lock.acquire()
-    data = process_queue.get()
-    process_lock.release()
-    thread_lock = threading.Lock()
+def main_child(process_queue, process_lock, config_data):
+    data = process_queue.get()]
+    n_threads = 2
+    for i in range(len(config_data["output"])):
+        n_threads += 1
+    threads = []
+    j = 0
+    for j in xrange(n_threads):
+        if j == 0:
+            threads.append(threading.Thread(target=thread_fn, args=(config_data["input"])))
 
+        elif j == 1:
+            threads.append(threading.Thread(target=thread_fn, args=(config_data["filter"])))
 
+        else:
+            threads.append(threading.Thread(target=thread_fn, args=(config_data["output"])))
+        
+        threads[j].start()
+    
+    for thread in threads():
+        thread.join()
+
+    os._exit(0)
 def main_parent():
     process_queue = Queue()
     process_lock = Lock()
@@ -46,7 +62,7 @@ def main_parent():
         process_queue.put(item)
 
     for item in config_data:
-        processes.append(Process(target=main_child, args=(process_queue,process_lock)))
+        processes.append(Process(target=main_child, args=(process_queue,process_lock, config_data[i])))
         processes[i].start()
         i += 1
 
