@@ -3,13 +3,14 @@ import imp
 import threading
 from multiprocessing import Queue, Process, Lock
 import threading
+import Queue
 
 pluginfolder = './plugins'
-conf = open('config.json', 'r')
 lock = threading.Lock()
 
 def get_plugin(typ, category):
-    os.chdir(os.path.join(pluginfolder, category))
+    cat = category + 's'
+    os.chdir(os.path.join(pluginfolder, cat))
     dirlist = os.listdir(os.getcwd())
     if not typ + '.py' in dirlist:
         raise ValueError("Specified plugin type is not present")
@@ -20,29 +21,38 @@ def get_plugin(typ, category):
             location = os.path.join(os.getcwd(), i)
             break
     
-    mod = imp.load_source(typ, location)
+    mod = imp.load_source(typ+'.py', location)
     return mod
 
-def call_plugin(typ, category, *args, **kwargs):
-    get_plugin(typ, category)
-    plugin_main(*args, **kwargs)
+def thread_fn(data, cat, *args):
+    try:
+        mod = get_plugin(data["type"], cat)
+    except ValueError:
+        print 'Plugin type not present', data["type"]
+        os._exit(0)
+    
+   res = mod.plugin_main(data["parameters"], *args)
+   os._exit(0)
 
 def main_child(process_queue, process_lock, config_data):
     data = process_queue.get()]
     n_threads = 2
-    for i in range(len(config_data["output"])):
+    for i in xrange(len(config_data["output"])):
         n_threads += 1
     threads = []
     j = 0
+    in_fil_queue = Queue.Queue()
+    fil_out_queue = Queue.Queue()
+
     for j in xrange(n_threads):
         if j == 0:
-            threads.append(threading.Thread(target=thread_fn, args=(config_data["input"])))
+            threads.append(threading.Thread(target=thread_fn, args=(config_data["input"], "input", in_fil_queue)))
 
         elif j == 1:
-            threads.append(threading.Thread(target=thread_fn, args=(config_data["filter"])))
+            threads.append(threading.Thread(target=thread_fn, args=(config_data["filter"], "filter", in_fil_queue, fil_out_queue)))
 
         else:
-            threads.append(threading.Thread(target=thread_fn, args=(config_data["output"])))
+            threads.append(threading.Thread(target=thread_fn, args=(config_data["output"][j - 2], "output", fil_out_queue)))
         
         threads[j].start()
     
@@ -50,6 +60,7 @@ def main_child(process_queue, process_lock, config_data):
         thread.join()
 
     os._exit(0)
+
 def main_parent():
     process_queue = Queue()
     process_lock = Lock()
