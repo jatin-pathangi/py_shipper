@@ -4,6 +4,7 @@ import threading
 from multiprocessing import Queue, Process, Lock
 import threading
 import Queue
+from simple_observer import Observable, Observer
 
 pluginfolder = './plugins'
 lock = threading.Lock()
@@ -35,24 +36,35 @@ def thread_fn(data, cat, *args):
    os._exit(0)
 
 def main_child(process_queue, process_lock, config_data):
-    data = process_queue.get()]
+    data = process_queue.get()
     n_threads = 2
     for i in xrange(len(config_data["output"])):
         n_threads += 1
     threads = []
     j = 0
     in_fil_queue = Queue.Queue()
-    fil_out_queue = Queue.Queue()
+    filter_to_output = Observable()
 
     for j in xrange(n_threads):
         if j == 0:
-            threads.append(threading.Thread(target=thread_fn, args=(config_data["input"], "input", in_fil_queue)))
-
+            threads.append(threading.Thread(target=thread_fn, 
+                           args=(config_data["input"], 
+                           "input", 
+                           in_fil_queue
+                           )))
         elif j == 1:
-            threads.append(threading.Thread(target=thread_fn, args=(config_data["filter"], "filter", in_fil_queue, fil_out_queue)))
-
+            threads.append(threading.Thread(target=thread_fn, 
+                           args=(config_data["filter"],
+                           "filter", 
+                           in_fil_queue, 
+                           filter_to_output
+                           )))
         else:
-            threads.append(threading.Thread(target=thread_fn, args=(config_data["output"][j - 2], "output", fil_out_queue)))
+            threads.append(threading.Thread(target=thread_fn, 
+                           args=(config_data["output"][j - 2], 
+                           "output", 
+                           filter_to_output
+                           )))
         
         threads[j].start()
     
