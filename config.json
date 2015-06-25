@@ -5,9 +5,9 @@
             "parameters": "f1.txt"
         },
         "filter": {
-            "type":"none",
-            "parameters":"none"
-        }
+            "type": "none",
+            "parameters": "none"
+        },
         "output": {
             "type": "network_port",
             "parameters": "5567"
@@ -19,9 +19,9 @@
             "parameters": "6676"
         },
         "filter": {
-            "type":"none",
-            "parameters":"none"
-        }
+            "type": "none",
+            "parameters": "none"
+        },
         "output": {
             "type": "network_port",
             "parameters": "9090"
