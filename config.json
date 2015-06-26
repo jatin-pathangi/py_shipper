@@ -8,10 +8,16 @@
             "type": "none",
             "parameters": "none"
         },
-        "output": {
-            "type": "network_port",
-            "parameters": "5567"
-        }
+        "output": [
+            {
+                "type": "network_port",
+                "parameters": "5567"
+            },
+            {
+                "type": "network_port",
+                "parameters": "6606"
+            }
+        ]
     },
     {
         "input": {
@@ -22,9 +28,15 @@
             "type": "none",
             "parameters": "none"
         },
-        "output": {
-            "type": "network_port",
-            "parameters": "9090"
-        }
+        "output": [
+            {
+                "type": "network_port",
+                "parameters": "9090"
+            },
+            {
+                "type": "network_port",
+                "parameters": "9989"
+            }
+        ]
     }
 ]

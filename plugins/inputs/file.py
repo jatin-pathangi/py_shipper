@@ -7,7 +7,7 @@ def plugin_main(parameter, queue):
         f = open(parameter, 'r')
     except IOError:
         print 'File not found'
-        os._exit(0)
+        return
     
     t = 0
     while True:

@@ -1,13 +1,18 @@
 import socket
-import Queue
+import sys
+sys.path.insert(0, '../..')
+from simple_observer import Observer, Observable
+import select
 
-def plugin_main(parameter, queue):
+def plugin_main(parameter, observable):
     host = 'localhost'
     port = int(parameter)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(host, port)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    sock.bind((host, port))
     sock.listen(5)
     outsocks = [sock]
+    obs = Observer(observable)
 
     while True:
         read,write,exce = select.select([], outsocks, [])
@@ -15,11 +20,10 @@ def plugin_main(parameter, queue):
         for w in write:
             if w == sock:
                 conn, address = sock.accept()
-                write.append(conn)
+                outsocks.append(conn)
                 
             else:
-                data = queue.get()
-                conn.send(data)
+                data = obs.wait()
+                w.send(data)
 
     sock.close()
-    os._exit(0)
