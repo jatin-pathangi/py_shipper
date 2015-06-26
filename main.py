@@ -55,10 +55,10 @@ def thread_fn(data, cat, *args):
     """
     res = m.plugin_main(data["parameters"], *args)
  
- """
+"""
 Everytime a new process is created by the main parent function, the 
 following function is executed by that child. 
- """
+"""
 
 def main_child(process_queue, process_lock, config_data):
     data = process_queue.get()
